@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, { Component } from "react";
+//import { withRouter } from "react-router-dom";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,15 +9,17 @@ import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
-import Footer from '../components/footer';
-import api from '../services/api';
-import {setNomeUsuario, login, setIdUsuario, setTipoUsuario } from '../services/auth';
-import notify from '../alerts/toast';
-import useEnterKeyListener from '../helpers/hooks'
+import Footer from '../../components/footer';
+import api from '../../services/api';
+import { login } from '../../services/auth';
+//import Alert from '@material-ui/lab/Alert';
+//import useEnterKeyListener from '../../helpers/hooks'
 
-const useStyles = makeStyles((theme) => ({
+
+
+const styles = theme => ({
   root: {
     height: '100vh',
   },
@@ -45,41 +48,40 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-}));
-
-export default function SignInSide() {
-  const classes = useStyles();
-
-    const [ email, setEmail ] = useState('');
-    const [ password, setPassword ] = useState('');
-
-    async function handleSubmit(){
-        await api.post('/users/login',{email,password})
-        .then(res => {
-            if(res.status===200){
-                if(res.data.status===1){
-                    login(res.data.token);
-                    setIdUsuario(res.data.id_client);
-                    setNomeUsuario(res.data.user_name);
-                    setTipoUsuario(res.data.user_type);
-
-                    window.location.href= '/dashboard'
-                }else if(res.data.status===2){
-                   return notify.error('Atenção: '+res.data.error);
-                }
-            }else{
-                return notify.error('Erro no servidor');
-            }
-        })
-        
-    };
-    
-    useEnterKeyListener({
-        querySelectorToExecuteClick: "#submitButton"
-      })
+});
 
 
-  return (
+class SignInSide extends Component {
+  
+  state = {
+    email: "",
+    password: "",
+    error: ""
+  };
+
+  handleSignIn = async e => {
+    e.preventDefault();
+    const { email, password } = this.state;
+    if (!email || !password) {
+      this.setState({ error: "Preencha e-mail e senha para continuar!" });
+    } else {
+      try {
+        const response = await api.post("/users/login", { email, password });
+        login(response.data.token);
+        this.props.history.push("/dashboard");
+      } catch (err) {
+        this.setState({
+          error:
+            "Houve um problema com o login, verifique suas credenciais."
+        });
+      }
+    }
+  };
+
+  
+  render() {
+    const { classes } = this.props;
+    return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={4} md={7} className={classes.image} />
@@ -90,8 +92,8 @@ export default function SignInSide() {
           </Avatar>
           <Typography component="h1" variant="h5">
             Login
-          </Typography>
-          <form className={classes.form} noValidate>
+          </Typography>          
+          <form onSubmit={this.handleSignIn} className={classes.form} noValidate>
             <TextField
               variant="outlined"
               margin="normal"
@@ -101,9 +103,8 @@ export default function SignInSide() {
               label="Email"
               name="email"
               autoComplete="email"
-              autoFocus
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              autoFocus              
+              onChange={e => this.setState({ email: e.target.value })}
             />
             <TextField
               variant="outlined"
@@ -114,21 +115,19 @@ export default function SignInSide() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
-              value={password}
-            onChange={e => setPassword(e.target.value)}
+              autoComplete="current-password"              
+              onChange={e => this.setState({ password: e.target.value })}
             />
+            {this.state.error &&  <p>{this.state.error}</p>}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick={handleSubmit}
             >
               Conectar
             </Button>
-
             <Box mt={5}>
               <Footer />
             </Box>
@@ -137,4 +136,7 @@ export default function SignInSide() {
       </Grid>
     </Grid>
   );
+ }
 }
+
+export default withStyles(styles)(SignInSide);

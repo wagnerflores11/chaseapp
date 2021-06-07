@@ -50,7 +50,7 @@ export default function Navmenu() {
          <ListItemIcon>
           <AssessmentOutlinedIcon />
         </ListItemIcon>
-        <ListItemText primary="Dashboard"  />
+        <ListItemText primary="Opções"  />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItem>  
       <Collapse in={open} timeout="auto" unmountOnExit>

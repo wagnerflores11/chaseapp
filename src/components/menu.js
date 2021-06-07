@@ -25,10 +25,9 @@ import Button from '@material-ui/core/Button';
 const notify = new Notify()
 const drawerWidth = 240;
 
-const useStyles = makeStyles((theme) => ({
-   
+const useStyles = makeStyles((theme) => ({   
     toolbar: {
-      paddingRight: 24, // keep right padding when drawer closed
+      paddingRight: 24, 
     },
     toolbarIcon: {
       display: 'flex',
