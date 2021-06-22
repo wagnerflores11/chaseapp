@@ -4,7 +4,8 @@ import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { isAuthenticated } from "./services/auth";
 
 import Login from './pages/SigIn/login';
-import Dashboard from './pages/userinput';
+import Crud from './pages/Integration/actions';
+
 
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
@@ -25,7 +26,8 @@ const Routes = () => (
     <Switch>
       <Route exact path="/" component={Login} />
       
-      <PrivateRoute path="/dashboard" component={Dashboard} />
+      <PrivateRoute path="/admin/integracao" component={Crud} />
+      
       <Route path="*" component={() => <h1>Page not found</h1>} />
     </Switch>
   </BrowserRouter>

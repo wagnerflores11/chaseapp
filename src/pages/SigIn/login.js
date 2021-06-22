@@ -24,7 +24,7 @@ const styles = theme => ({
     height: '100vh',
   },
   image: {
-    backgroundImage: 'url(https://file-service.riooportunidadesdenegocios.com.br/images/741x371/fa459143-43f7-41af-b405-73592f21469f.jpg)',
+    backgroundImage: 'url(https://institucional.altenburg.com.br/img/12850/0/0/.jpg)',
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
@@ -48,6 +48,9 @@ const styles = theme => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  p: {
+    backgroundColor: theme.palette.secondary.main
+  }
 });
 
 
@@ -68,7 +71,7 @@ class SignInSide extends Component {
       try {
         const response = await api.post("/users/login", { email, password });
         login(response.data.token);
-        this.props.history.push("/dashboard");
+        this.props.history.push("/admin/integracao");
       } catch (err) {
         this.setState({
           error:
@@ -118,7 +121,7 @@ class SignInSide extends Component {
               autoComplete="current-password"              
               onChange={e => this.setState({ password: e.target.value })}
             />
-            {this.state.error &&  <p>{this.state.error}</p>}
+            {this.state.error &&  <p className={classes.p}>{this.state.error}</p>}
             <Button
               type="submit"
               fullWidth
